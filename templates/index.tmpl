@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breadcrumbs</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/web/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/web/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/web/images/favicon-16x16.png">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/web/style.css">
+</head>
+<body>
+    <h1>GeoChat</h1>
+    <h2>Leave chat messages</h2>
+    <p id="changethis">Hello</p>
+    <div>
+        <button onclick="getLocation()">Look here for breadcrumbs</button>
+    </div>
+    <div id="breadcrumbs"></div>
+    <div>
+        <button onclick="logLocation()">Leave a breadcrumb</button>
+    </div>
+    <div id="litter" class="hidden">
+        <form action="/submitbreadcrumb" method="post">
+            <label for="message">Message</label><br>
+            <textarea type="text" id="breadcrumb" name="text"></textarea><br>
+            <textarea type="text" id="lat" name="lat"></textarea><br>
+            <textarea type="text" id="long" name="long"></textarea><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    <script src="/web/script.js"></script>
+</body>
+</html>

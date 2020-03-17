@@ -1,0 +1,12 @@
+body {
+    background-color: rgb(204, 245, 202);
+}
+
+.hidden {
+    display: none;
+}
+
+#breadcrumb {
+    min-height: 100px;
+    min-width: 300px;
+}
