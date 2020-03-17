@@ -4,8 +4,10 @@ package geo
 import (
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"os"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -89,27 +91,60 @@ func findBreadcrumb(c *gin.Context) {
 	lat := latLong.Lat
 	long := latLong.Long
 
-	db.Where("lat >= ? AND lat <= ? AND long >= ? and long <= ?",
+	db.Limit(5).Where("lat >= ? AND lat <= ? AND long >= ? and long <= ?",
 		lat-0.015, lat+0.015, long-0.015, long+0.015).Find(&messages)
 	log.Println("Message", messages)
 
-	// E/W .014 -> 1.5 mi
-	// N/S .0144 -> 1.0 mi
+	messages = findDistances(messages, lat, long)
+	messages = formatMessages(messages)
 
-	m := []string{}
 	for i := 0; i < len(messages); i++ {
-		m = append(m, messages[i].Text)
+		fmt.Printf("%+v\n", messages)
 	}
-	c.JSON(http.StatusOK, gin.H{"messages": m})
+	returnValue := ""
+	returnValue += fmt.Sprintf("%+v\n", messages)
+	c.JSON(http.StatusOK, gin.H{"messages": returnValue})
+}
+
+func findDistances(messages []Message, lat float64, long float64) []Message {
+	for i := 0; i < len(messages); i++ {
+		message := messages[i]
+		deltaXDeg := math.Abs(long - message.Long)
+		deltaYDeg := math.Abs(lat - message.Lat)
+
+		deltaXMiles := deltaXDeg / .0140 * 1.5 // appx 1.5 mi/.0140 deg for east/west in US
+		deltaYMiles := deltaYDeg / .0144 * 1.0 // appx 1.0 mi/.0144 deg for north/south in US
+
+		distance := math.Sqrt(math.Pow(deltaXMiles, 2) + math.Pow(deltaYMiles, 2))
+
+		messages[i].Distance = distance
+	}
+
+	sort.Slice(messages, func(i, j int) bool {
+		return messages[i].Distance < messages[j].Distance
+	})
+
+	return messages
+}
+
+func formatMessages(messages []Message) []Message {
+	for i := 0; i < len(messages); i++ {
+		message := messages[i]
+		message.Distance = math.Floor(message.Distance*1000) / 1000
+		message.Lat = math.Floor(message.Lat*1000) / 1000
+		message.Long = math.Floor(message.Long*1000) / 1000
+		messages[i] = message
+	}
+	return messages
 }
 
 // Message struct to hold message info and location
 type Message struct {
 	gorm.Model
 	Text     string  `form:"text"`
-	Lat      float32 `form:"lat"`
-	Long     float32 `form:"long"`
-	Distance float32 `form:"distance"`
+	Lat      float64 `form:"lat"`
+	Long     float64 `form:"long"`
+	Distance float64 `form:"distance"`
 	Private  bool    `form:"private"`
 	Password string  `form:"password"`
 }
