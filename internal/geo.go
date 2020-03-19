@@ -37,7 +37,7 @@ func SetupRouter() {
 	{
 		geo.GET("", rootEndpoint)
 		geo.POST("/submitbreadcrumb", submitBreadcrumb)
-		geo.GET("/findbreadcrumb", findBreadcrumb)
+		geo.GET("/getbreadcrumbs", getBreadcrumbs)
 	}
 	router.Static("/web", "./web")
 	router.NoRoute(endpointNotFound)
@@ -59,9 +59,7 @@ func endpointNotFound(c *gin.Context) {
 }
 
 func rootEndpoint(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.tmpl", gin.H{
-		"title": "Main website",
-	})
+	c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 }
 
 func submitBreadcrumb(c *gin.Context) {
@@ -80,30 +78,30 @@ func writeBreadcrumbToDB(message Message) {
 	db.Create(&message)
 }
 
-func findBreadcrumb(c *gin.Context) {
-	log.Println(c)
-	var latLong Message
-	var messages []Message
-	if c.ShouldBindQuery(&latLong) == nil {
-		log.Println(latLong.Lat)
-		log.Println(latLong.Long)
+func getBreadcrumbs(c *gin.Context) {
+	lat, long, err := parseLatLong(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"invalid request": err})
 	}
-	lat := latLong.Lat
-	long := latLong.Long
+	messages := findNearbyMessages(lat, long)
+	messages = findDistances(messages, lat, long)
+	messages = roundMessageValues(messages)
+	c.JSON(http.StatusOK, gin.H{"messages": messages})
+}
 
+func parseLatLong(c *gin.Context) (lat float64, long float64, err error) {
+	var latLong Message
+	err = c.ShouldBindQuery(&latLong)
+	lat = latLong.Lat
+	long = latLong.Long
+	return lat, long, err
+}
+
+func findNearbyMessages(lat, long float64) []Message {
+	var messages []Message
 	db.Limit(5).Where("lat >= ? AND lat <= ? AND long >= ? and long <= ?",
 		lat-0.015, lat+0.015, long-0.015, long+0.015).Find(&messages)
-	log.Println("Message", messages)
-
-	messages = findDistances(messages, lat, long)
-	messages = formatMessages(messages)
-
-	for i := 0; i < len(messages); i++ {
-		fmt.Printf("%+v\n", messages)
-	}
-	returnValue := ""
-	returnValue += fmt.Sprintf("%+v\n", messages)
-	c.JSON(http.StatusOK, gin.H{"messages": returnValue})
+	return messages
 }
 
 func findDistances(messages []Message, lat float64, long float64) []Message {
@@ -127,7 +125,7 @@ func findDistances(messages []Message, lat float64, long float64) []Message {
 	return messages
 }
 
-func formatMessages(messages []Message) []Message {
+func roundMessageValues(messages []Message) []Message {
 	for i := 0; i < len(messages); i++ {
 		message := messages[i]
 		message.Distance = math.Floor(message.Distance*1000) / 1000
