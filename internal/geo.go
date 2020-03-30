@@ -67,11 +67,18 @@ func submitBreadcrumb(c *gin.Context) {
 	if c.ShouldBind(&message) == nil {
 		log.Print(message.Text)
 	}
-	go writeBreadcrumbToDB(message)
-
-	c.HTML(http.StatusOK, "submitted.tmpl", gin.H{
-		"title": "Main website",
-	})
+	fmt.Println("Text:", message.Text)
+	if message.Text != "" {
+		go writeBreadcrumbToDB(message)
+	
+		c.HTML(http.StatusOK, "submitted.tmpl", gin.H{
+			"title": "Main website",
+		})
+	} else {
+		c.HTML(http.StatusOK, "submittedNoText.tmpl", gin.H{
+			"title": "Main website",
+		})
+	}
 }
 
 func writeBreadcrumbToDB(message Message) {

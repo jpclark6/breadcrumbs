@@ -1,34 +1,66 @@
 function logLocation() {
-    var x = document.getElementById("changethis");
-    x.innerHTML = "Getting location..."
-    document.getElementById("litter").classList.toggle('hidden');
+    addLoading()
+    const container = document.getElementById('bc')
+    container.innerHTML = ""
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
     } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+        loading.innerHTML = "Geolocation is not supported by this browser.";
     }
 }
 
+async function addLoading() {
+    var node = document.createElement("h2");   
+    node.setAttribute("id", "loadingtext");              // Create a <li> node
+    var textnode = document.createTextNode("");         // Create a text node
+    node.appendChild(textnode);                              // Append the text to <li>
+    var loading = document.getElementById("loading")
+    loading.appendChild(node);
+    loading.classList.remove("hidden")
+    while (true) {
+        await sleep(500);
+        document.getElementById("loadingtext").innerHTML = "Finding location."
+        await sleep(500);
+        document.getElementById("loadingtext").innerHTML = "Finding location.."
+        await sleep(500);
+        document.getElementById("loadingtext").innerHTML = "Finding location..."
+    }
+}
+
+function removeLoading() {                            // Append the text to <li>
+    var loading = document.getElementById("loading")
+    loading.innerHTML = ""
+    loading.classList.add("hidden")
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function showPosition(position) {
-    var x = document.getElementById("changethis");
-    x.innerHTML = "Latitude: " + position.coords.latitude +
-        "<br>Longitude: " + position.coords.longitude;
+    removeLoading()
+    document.getElementById("long-descriptions").classList.add("hidden")
+    document.getElementById("litter").classList.remove('hidden');
     lat = document.getElementById("lat")
-    lat.value = position.coords.latitude
+    lat.value = position.coords.latitude.toFixed(9)
     long = document.getElementById("long")
-    long.value = position.coords.longitude
+    long.value = position.coords.longitude.toFixed(9)
 }
 
 function getLocation() {
-    x.innerHTML = "Finding nearby messages..."
+    addLoading()
+    document.getElementById("litter").classList.add('hidden');
+    document.getElementById("long-descriptions").classList.add("hidden")
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(findMessages);
     } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
+        removeLoading()
+        loading.innerHTML = "Geolocation is not supported by this browser.";
     }
 }
 
 function findMessages(position) {
+    removeLoading()
     var lat = position.coords.latitude
     var long = position.coords.longitude
     var url = "/getbreadcrumbs"
@@ -50,15 +82,16 @@ function buildList(data) {
         var displayData = {
             Distance: message.Distance.toString(),
             Breadcrumb: message.Text,
-            CreatedAt: date.toString()
+            CreatedAt: date
         }
         updatedList.push(displayData)
     });
 
-    var table = document.querySelector("table")
-    var newdata = Object.keys(updatedList[0])
+    console.log(updatedList)
+
+    var table = document.getElementById("bc")
+    table.classList.remove("hidden")
     generateTable(table, updatedList)
-    generateTableHead(table, newdata)
 }
 
 function generateTableHead(table, data) {
@@ -73,12 +106,49 @@ function generateTableHead(table, data) {
 }
 
 function generateTable(table, data) {
-    for (let element of data) {
-        let row = table.insertRow();
-        for (key in element) {
-            let cell = row.insertCell();
-            let text = document.createTextNode(element[key]);
-            cell.appendChild(text);
-        }
+    const apiResult = data
+
+    const container = document.getElementById('bc')
+    container.innerHTML = ""
+
+    if (apiResult.length > 0) {
+        apiResult.forEach((result, idx) => {
+            // Create card element
+            const card = document.createElement('div');
+            card.classList = 'card-body';
+    
+            // Construct card content
+            const content = `
+                <div class="card">
+                    <div>
+                        <div class="card-body">
+                            <h3>${result.Breadcrumb}</h3>
+                            <p class="grey-text">${result.Distance} miles away</p>
+                            <p class="grey-text">Dropped at ${result.CreatedAt.toLocaleTimeString('en-US')} on ${result.CreatedAt.toDateString()}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+    
+            // Append newyly created card element to the container
+            container.innerHTML += content;
+        })
+    } else {
+        const card = document.createElement('div');
+        card.classList = 'card-body';
+
+        // Construct card content
+        const content = `
+                <div class="card">
+                    <div>
+                        <div class="card-body">
+                            <h3>Sorry, no breadcrumbs around here.</h3>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        // Append newyly created card element to the container
+        container.innerHTML = content;
     }
 }

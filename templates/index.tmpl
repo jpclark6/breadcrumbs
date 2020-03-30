@@ -7,33 +7,50 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/web/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/web/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/web/images/favicon-16x16.png">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/web/css/reset.css">
     <link rel="stylesheet" type="text/css" href="/web/css/style.css">
 </head>
 <body>
-    <h1>Breadcrumbs</h1>
-    <h2>Leave a breadcrumb for someone you know</h2>
-    <p id="changethis">Hello</p>
-    <div>
+    <div id="bg">
+        <img src="/web/images/earth.jpg" id="bg" alt="">
+    </div>
+    <div id="title">
+        <h1 class="centered">Breadcrumbs</h1>
+    </div>
+    <h2 class="centered" id="short-description">Location based messages</h2>
+    <div class="bread-button">
         <button onclick="getLocation()">Look here for breadcrumbs</button>
     </div>
     <div id="breadcrumbs"></div>
-    <div>
+    <div class="bread-button">
         <button onclick="logLocation()">Leave a breadcrumb</button>
     </div>
+    <div id="bc" class="hidden"></div>
     <div id="litter" class="hidden">
         <form action="/submitbreadcrumb" method="post">
             <label for="message">Message</label><br>
             <textarea type="text" id="breadcrumb" name="text"></textarea><br>
-            <textarea type="text" id="lat" name="lat"></textarea><br>
-            <textarea type="text" id="long" name="long"></textarea><br>
+            <label for="message">Current location:</label>
+            <textarea type="text" id="lat" name="lat" class="latlon"></textarea>
+            <textarea type="text" id="long" name="long" class="latlon"></textarea><br>
             <input type="submit" value="Submit">
         </form>
     </div>
     <div id="app"></div>
-    <table>
-        
-    </table>
+    <div id="long-descriptions" class="centered">
+        <p class="long-description">Breadcrumbs uses your phone's location to leave a location based message, as well as to find
+            messages near you.
+        </p>
+        <p class="long-description">To leave a message where you're at click "Leave a breadcrumb". To find breadcrumbs
+            that have been left near you click "Leave a breadcrumb".
+        </p>
+        <p class="long-description">No personal information is saved, and location data is
+            only used during the saving and looking up of breadcrumbs.
+        </p>
+    </div>
+    <div id="loading" class="hidden"></div>
     <script src="/web/javascript/script.js"></script>
 </body>
 </html>
