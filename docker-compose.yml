@@ -1,0 +1,24 @@
+version: '3.5'
+services:
+  pgd_postgres:
+    container_name: pgd_db
+    image: postgres:11.2
+    restart: on-failure
+    environment:
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: db_user
+      POSTGRES_DB: db_name
+    ports:
+      - 5432:5432
+  pgd_golang:
+    container_name: pgd_app
+    build:
+      context: .
+    restart: on-failure
+    ports:
+      - 8080:8080
+    tty: true
+    depends_on:
+      - pgd_postgres
+    links:
+      - pgd_postgres

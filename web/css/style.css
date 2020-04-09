@@ -108,7 +108,7 @@ body {
 .latlon {
     color: white;
     background-color: black;
-    max-height: 9px;
+    max-height: 11px;
     max-width: 88px;
     border: none;
 }
@@ -133,4 +133,8 @@ label {
 
 #breadcrumb {
     margin: 10px;
+}
+
+a {
+    color: snow;
 }
