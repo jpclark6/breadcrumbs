@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"math/rand"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -47,7 +48,8 @@ func SetupRouter() {
 
 // SetupDatabase sets up the database connection
 func SetupDatabase() {
-	db, err = gorm.Open("postgres", "sslmode=disable user=jus host=localhost port=5432 dbname=breadcrumbs")
+	db, err = gorm.Open("postgres", "sslmode=disable user=jus host=fullstack-postgres port=5432 dbname=breadcrumbs password=mypassword")
+	// db, err = gorm.Open("postgres", "sslmode=disable user=jus host=localhost port=5432 dbname=breadcrumbs")
 	if err != nil {
 		fmt.Println("Didn't connect", err)
 	}
@@ -82,6 +84,8 @@ func submitBreadcrumb(c *gin.Context) {
 }
 
 func writeBreadcrumbToDB(message Message) {
+	message.Lat = message.Lat + 0.005 * (1 - rand.Float64())
+	message.Long = message.Long + 0.005 * (1 - rand.Float64())
 	db.Create(&message)
 }
 

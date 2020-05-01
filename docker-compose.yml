@@ -1,24 +1,57 @@
-version: '3.5'
+version: '3'
 services:
-  pgd_postgres:
-    container_name: pgd_db
-    image: postgres:11.2
+  app:
+    container_name: full_app
+    build: .
+    ports: 
+      - 8080:8080 
     restart: on-failure
-    environment:
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_USER: db_user
-      POSTGRES_DB: db_name
-    ports:
-      - 5432:5432
-  pgd_golang:
-    container_name: pgd_app
-    build:
-      context: .
-    restart: on-failure
-    ports:
-      - 8080:8080
-    tty: true
+    volumes:
+      - api:/usr/src/app/
     depends_on:
-      - pgd_postgres
-    links:
-      - pgd_postgres
+      - fullstack-postgres          # Uncomment this when using postgres.
+    networks:
+      - fullstack
+
+
+  fullstack-postgres:
+    image: postgres:latest
+    container_name: full_db_postgres
+    environment:
+      - POSTGRES_USER=jus
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=breadcrumbs
+      - DATABASE_HOST=fullstack-postgres
+      # - POSTGRES_USER=${DB_USER}  
+      # - POSTGRES_PASSWORD=${DB_PASSWORD}
+      # - POSTGRES_DB=${DB_NAME}
+      # - DATABASE_HOST=${DB_HOST} 
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - fullstack
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: j@example.com
+      PGADMIN_DEFAULT_PASSWORD: jabc123
+    depends_on:
+      - fullstack-postgres
+    ports:
+      - "5050:80"
+    networks:
+      - fullstack
+    restart: unless-stopped
+
+volumes:
+  api:
+  database_postgres:                  # Uncomment this when using postgres.
+
+# Networks to be created to facilitate communication between containers
+networks:
+  fullstack:
+    driver: bridge
