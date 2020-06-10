@@ -12,7 +12,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq" // used by gorm
 )
 
@@ -21,12 +20,11 @@ var err error
 
 // SetupRouter creates endpoints and calls additional logic
 func SetupRouter() {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("No .env file found")
-	}
-	port, _ := os.LookupEnv("PORT")
+	port := os.Getenv("PORT")
 	if port == "" {
 		fmt.Println("$PORT must be set")
+	} else {
+		fmt.Println("Port", port)
 	}
 
 	router := gin.New()
@@ -48,7 +46,25 @@ func SetupRouter() {
 
 // SetupDatabase sets up the database connection
 func SetupDatabase() {
-	db, err = gorm.Open("postgres", "sslmode=disable user=jus host=fullstack-postgres port=5432 dbname=breadcrumbs password=mypassword")
+	dbSSL := os.Getenv("DB_SSL")
+	username := os.Getenv("DB_USERNAME")
+	fmt.Println("Username", username)
+	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST")
+	name := os.Getenv("DB_NAME")
+	databaseURL := fmt.Sprintf("sslmode=%v user=%v password=%v host=%v port=%v dbname=%v",
+		dbSSL,
+        username,
+        password,
+        host,
+        5432,
+        name,
+    )
+	// if !found {
+	// 	fmt.Println("Didn't find env var for database_url")
+	// }
+	fmt.Println("databaseURL", databaseURL)
+	db, err = gorm.Open("postgres", databaseURL)
 	// db, err = gorm.Open("postgres", "sslmode=disable user=jus host=localhost port=5432 dbname=breadcrumbs")
 	if err != nil {
 		fmt.Println("Didn't connect", err)

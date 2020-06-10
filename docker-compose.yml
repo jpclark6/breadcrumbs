@@ -9,7 +9,7 @@ services:
     volumes:
       - api:/usr/src/app/
     depends_on:
-      - fullstack-postgres          # Uncomment this when using postgres.
+      - fullstack-postgres          
     networks:
       - fullstack
 
@@ -18,14 +18,10 @@ services:
     image: postgres:latest
     container_name: full_db_postgres
     environment:
-      - POSTGRES_USER=jus
-      - POSTGRES_PASSWORD=mypassword
-      - POSTGRES_DB=breadcrumbs
-      - DATABASE_HOST=fullstack-postgres
-      # - POSTGRES_USER=${DB_USER}  
-      # - POSTGRES_PASSWORD=${DB_PASSWORD}
-      # - POSTGRES_DB=${DB_NAME}
-      # - DATABASE_HOST=${DB_HOST} 
+      - POSTGRES_USER=${DB_USER}  
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST} 
     ports:
       - '5432:5432'
     volumes:
@@ -37,8 +33,8 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin_container
     environment:
-      PGADMIN_DEFAULT_EMAIL: j@example.com
-      PGADMIN_DEFAULT_PASSWORD: jabc123
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     depends_on:
       - fullstack-postgres
     ports:
@@ -49,7 +45,7 @@ services:
 
 volumes:
   api:
-  database_postgres:                  # Uncomment this when using postgres.
+  database_postgres:                  
 
 # Networks to be created to facilitate communication between containers
 networks:
