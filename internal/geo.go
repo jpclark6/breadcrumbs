@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"math/rand"
 	"net/http"
 	"os"
 	"sort"
-	"math/rand"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -48,32 +48,27 @@ func SetupRouter() {
 func SetupDatabase() {
 	dbSSL := os.Getenv("DB_SSL")
 	username := os.Getenv("DB_USERNAME")
-	fmt.Println("Username", username)
 	password := os.Getenv("DB_PASSWORD")
 	host := os.Getenv("DB_HOST")
 	name := os.Getenv("DB_NAME")
 	databaseURL := fmt.Sprintf("sslmode=%v user=%v password=%v host=%v port=%v dbname=%v",
 		dbSSL,
-        username,
-        password,
-        host,
-        5432,
-        name,
-    )
-	// if !found {
-	// 	fmt.Println("Didn't find env var for database_url")
-	// }
+		username,
+		password,
+		host,
+		5432,
+		name,
+	)
 	fmt.Println("databaseURL", databaseURL)
 	db, err = gorm.Open("postgres", databaseURL)
-	// db, err = gorm.Open("postgres", "sslmode=disable user=jus host=localhost port=5432 dbname=breadcrumbs")
 	if err != nil {
-		fmt.Println("Didn't connect", err)
+		fmt.Println("could not connect to database. err:", err)
 	}
 	db.AutoMigrate(&Message{})
 }
 
 func endpointNotFound(c *gin.Context) {
-	c.Writer.WriteString("there's no endpoint for that!")
+	c.Writer.WriteString("404: not found")
 }
 
 func rootEndpoint(c *gin.Context) {
@@ -85,10 +80,10 @@ func submitBreadcrumb(c *gin.Context) {
 	if c.ShouldBind(&message) == nil {
 		log.Print(message.Text)
 	}
-	fmt.Println("Text:", message.Text)
+	fmt.Println("text:", message.Text)
 	if message.Text != "" {
 		go writeBreadcrumbToDB(message)
-	
+
 		c.HTML(http.StatusOK, "submitted.tmpl", gin.H{
 			"title": "Main website",
 		})
@@ -100,8 +95,8 @@ func submitBreadcrumb(c *gin.Context) {
 }
 
 func writeBreadcrumbToDB(message Message) {
-	message.Lat = message.Lat + 0.005 * (1 - rand.Float64())
-	message.Long = message.Long + 0.005 * (1 - rand.Float64())
+	message.Lat = message.Lat + 0.005*(1-rand.Float64())
+	message.Long = message.Long + 0.005*(1-rand.Float64())
 	db.Create(&message)
 }
 

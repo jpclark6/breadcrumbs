@@ -3,7 +3,7 @@ package main
 
 import (
 	"fmt"
-	
+
 	"github.com/jpclark6/breadcrumbs/internal"
 
 	"github.com/joho/godotenv"
