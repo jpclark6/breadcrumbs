@@ -1,5 +1,7 @@
 html {
     margin: 0;
+    max-width: 450px;
+    margin: auto;
 }
 
 body {
@@ -24,7 +26,7 @@ body {
   right: 0; 
   bottom: 0; 
   margin: auto; 
-  min-width: 50%;
+  max-width: 600px;
   min-height: 138%;
   filter: brightness(40%);
 }
