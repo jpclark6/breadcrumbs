@@ -20,13 +20,19 @@ var err error
 
 // SetupRouter creates endpoints and calls additional logic
 func SetupRouter() {
-	port := os.Getenv("PORT")
+    port := os.Getenv("PORT")
 	if port == "" {
 		fmt.Println("$PORT must be set")
 	} else {
 		fmt.Println("Port", port)
-	}
+    }
+    
+	router := SetupRouterSettings()
 
+	router.Run(":" + port)
+}
+
+func SetupRouterSettings() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
@@ -39,9 +45,8 @@ func SetupRouter() {
 		geo.GET("/getbreadcrumbs", getBreadcrumbs)
 	}
 	router.Static("/web", "./web")
-	router.NoRoute(endpointNotFound)
-
-	router.Run(":" + port)
+    router.NoRoute(endpointNotFound)
+    return router
 }
 
 // SetupDatabase sets up the database connection
@@ -59,7 +64,6 @@ func SetupDatabase() {
 		5432,
 		name,
 	)
-	fmt.Println("databaseURL", databaseURL)
 	db, err = gorm.Open("postgres", databaseURL)
 	if err != nil {
 		fmt.Println("could not connect to database. err:", err)
@@ -106,8 +110,8 @@ func getBreadcrumbs(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"invalid request": err})
 	}
 	messages := findNearbyMessages(lat, long)
-	messages = findDistances(messages, lat, long)
-	messages = roundMessageValues(messages)
+	messages = FindDistances(messages, lat, long)
+	messages = RoundMessageValues(messages)
 	c.JSON(http.StatusOK, gin.H{"messages": messages})
 }
 
@@ -126,7 +130,7 @@ func findNearbyMessages(lat, long float64) []Message {
 	return messages
 }
 
-func findDistances(messages []Message, lat float64, long float64) []Message {
+func FindDistances(messages []Message, lat float64, long float64) []Message {
 	for i := 0; i < len(messages); i++ {
 		message := messages[i]
 		deltaXDeg := math.Abs(long - message.Long)
@@ -147,7 +151,7 @@ func findDistances(messages []Message, lat float64, long float64) []Message {
 	return messages
 }
 
-func roundMessageValues(messages []Message) []Message {
+func RoundMessageValues(messages []Message) []Message {
 	for i := 0; i < len(messages); i++ {
 		message := messages[i]
 		message.Distance = math.Floor(message.Distance*1000) / 1000
@@ -156,15 +160,4 @@ func roundMessageValues(messages []Message) []Message {
 		messages[i] = message
 	}
 	return messages
-}
-
-// Message struct to hold message info and location
-type Message struct {
-	gorm.Model
-	Text     string  `form:"text"`
-	Lat      float64 `form:"lat"`
-	Long     float64 `form:"long"`
-	Distance float64 `form:"distance"`
-	Private  bool    `form:"private"`
-	Password string  `form:"password"`
 }

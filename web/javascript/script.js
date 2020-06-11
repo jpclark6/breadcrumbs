@@ -19,11 +19,17 @@ async function addLoading() {
     loading.classList.remove("hidden")
     while (true) {
         await sleep(500);
-        document.getElementById("loadingtext").innerHTML = "Finding location."
+        if (document.getElementById("loadingtext")) {
+            document.getElementById("loadingtext").innerHTML = "Finding location."
+        }
         await sleep(500);
-        document.getElementById("loadingtext").innerHTML = "Finding location.."
+        if (document.getElementById("loadingtext")) {
+            document.getElementById("loadingtext").innerHTML = "Finding location.."
+        }
         await sleep(500);
-        document.getElementById("loadingtext").innerHTML = "Finding location..."
+        if (document.getElementById("loadingtext")) {
+            document.getElementById("loadingtext").innerHTML = "Finding location..."
+        }
     }
 }
 
