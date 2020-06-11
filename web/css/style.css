@@ -82,15 +82,16 @@ body {
 }
 
 #loading {
-  position: absolute; 
+  /* position: absolute;  */
   top: 20%; 
-  left: -10%; 
-  width: 110%;
+  left: 16%; 
+  width: 45%;
   background-color: white;
   color: black;
   margin: auto; 
   padding: 20px 40px;
   text-align: center;
+  border-radius: 8px;
 }
 
 .card {
