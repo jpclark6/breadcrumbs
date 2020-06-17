@@ -2,3 +2,4 @@
 local.env
 prod.env
 main
+.DS_Store
