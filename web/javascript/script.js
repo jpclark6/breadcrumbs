@@ -93,8 +93,6 @@ function buildList(data) {
         updatedList.push(displayData)
     });
 
-    console.log(updatedList)
-
     var table = document.getElementById("bc")
     table.classList.remove("hidden")
     generateTable(table, updatedList)
@@ -119,11 +117,9 @@ function generateTable(table, data) {
 
     if (apiResult.length > 0) {
         apiResult.forEach((result, idx) => {
-            // Create card element
             const card = document.createElement('div');
             card.classList = 'card-body';
     
-            // Construct card content
             const content = `
                 <div class="card">
                     <div>
@@ -136,14 +132,12 @@ function generateTable(table, data) {
                 </div>
             `;
     
-            // Append newyly created card element to the container
             container.innerHTML += content;
         })
     } else {
         const card = document.createElement('div');
         card.classList = 'card-body';
 
-        // Construct card content
         const content = `
                 <div class="card">
                     <div>
