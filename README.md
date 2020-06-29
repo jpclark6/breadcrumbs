@@ -26,12 +26,12 @@ I also wanted to familiarize myself more with Docker, containerizing apps, and h
 
 ### Main page
 
-<img src="./screenshots/root.png" height="500px">
+<img src="./screenshots/Root.png" height="500px">
 
 ### Leaving a breadcrumb
 
 <img src="./screenshots/leave_breadcrumb.png" height="500px">
-<img src="./screenshots/submitted.png" height="500px">
+<img src="./screenshots/Submitted.png" height="500px">
 
 ### Finding a breadcrumb
 
