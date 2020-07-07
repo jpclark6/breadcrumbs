@@ -143,6 +143,10 @@ a {
 }
 
 @media (min-width:641px) {
+    #bg {
+        width: 100%;
+        height: 50%;
+    }
     #bg img {
         position: absolute; 
         top: 0; 
@@ -151,5 +155,8 @@ a {
         bottom: 0; 
         margin: auto; 
         filter: brightness(40%);
+        max-width: 100%;
+        object-fit: cover;
+        min-height: 300%
     }
 }
