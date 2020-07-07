@@ -141,3 +141,15 @@ label {
 a {
     color: snow;
 }
+
+@media (min-width:641px) {
+    #bg img {
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        right: 0; 
+        bottom: 0; 
+        margin: auto; 
+        filter: brightness(40%);
+    }
+}
