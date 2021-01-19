@@ -2,7 +2,7 @@
 
 ## What does it do?
 
-[Breadcrumbs](http://ec2-54-237-51-191.compute-1.amazonaws.com) has a single purpose - to find and leave "breadcrumbs" a.k.a. messages. Optimized for mobile it uses a phone's GPS to look for any messages left within approximately 1 square mile encompassing the user, or to leave a message with a slightly randomized location to avoid being able to trace a message to a specific address. 
+[Breadcrumbs](https://breadcrumbs.jclarkdev.com/) has a single purpose - to find and leave "breadcrumbs" a.k.a. messages. Optimized for mobile it uses a phone's GPS to look for any messages left within approximately 1 square mile encompassing the user, or to leave a message with a slightly randomized location to avoid being able to trace a message to a specific address. 
 
 Similar to leaving actual breadcrumbs to find your way, you can also leave a trail of "breadcrumbs" to point a friend along an unknown path, or just leave one at a cool location on a hike or in the city.
 
@@ -12,7 +12,7 @@ The app is currently running in a Docker container on an EC2 instance and was wr
 
 ## Where to check it out
 
-Breadcrumbs can currently be found at [Breadcrumbs](http://ec2-54-237-51-191.compute-1.amazonaws.com)
+Breadcrumbs can currently be found at [Breadcrumbs](https://breadcrumbs.jclarkdev.com/)
 
 ## Motivation
 

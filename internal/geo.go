@@ -20,13 +20,13 @@ var err error
 
 // SetupRouter creates endpoints and calls additional logic
 func SetupRouter() {
-    port := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	if port == "" {
 		fmt.Println("$PORT must be set")
 	} else {
 		fmt.Println("Port", port)
-    }
-    
+	}
+
 	router := SetupRouterSettings()
 
 	router.Run(":" + port)
@@ -45,8 +45,8 @@ func SetupRouterSettings() *gin.Engine {
 		geo.GET("/getbreadcrumbs", getBreadcrumbs)
 	}
 	router.Static("/web", "./web")
-    router.NoRoute(endpointNotFound)
-    return router
+	router.NoRoute(endpointNotFound)
+	return router
 }
 
 // SetupDatabase sets up the database connection

@@ -12,8 +12,8 @@ function logLocation() {
 async function addLoading() {
     var node = document.createElement("h2");   
     node.setAttribute("id", "loadingtext");              // Create a <li> node
-    var textnode = document.createTextNode("");         // Create a text node
-    node.appendChild(textnode);                              // Append the text to <li>
+    var textnode = document.createTextNode("");          // Create a text node
+    node.appendChild(textnode);                          // Append the text to <li>
     var loading = document.getElementById("loading")
     loading.appendChild(node);
     loading.classList.remove("hidden")
